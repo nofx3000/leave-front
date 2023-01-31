@@ -1,0 +1,17 @@
+// .header {
+//   height: 10vh !important;
+//   width: 100vw;
+//   background-color: red !important;
+// }
+.sider {
+  flex: 0 0 10vw !important;
+  max-width: 10vw !important;
+  height: 100vh;
+  background-color: yellow !important;
+}
+.content {
+  background-color: #fff;
+  padding: 4vh 2vw;
+  height: 100vh;
+  overflow: scroll;
+}
