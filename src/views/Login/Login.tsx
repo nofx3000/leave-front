@@ -16,10 +16,12 @@ const App: React.FC = () => {
 
   const onFinish = async (values: any) => {
     try {
-      const res = await axios.post("/users/login", values);
+      const res = await axios.post("/login", values);
+      console.log(res);
       let token: string = res.data.data;
       token = `Bearer ${token}`;
       window.localStorage.setItem("token", token);
+      axios.defaults.headers["authorization"] = token;
       dispatch(setToken(token));
       message.success("登陆成功!");
       navigate("/");
@@ -35,7 +37,7 @@ const App: React.FC = () => {
   return (
     <div className={style.bg}>
       <Card className={style.card}>
-        <p className={style.title}>欢迎来到休假管理系统</p>
+        <p className={style.title}>欢迎来到调休管理系统</p>
         <Form
           name="basic"
           labelCol={{ span: 4 }}
@@ -61,16 +63,14 @@ const App: React.FC = () => {
             <Input.Password />
           </Form.Item>
 
-          <Form.Item
-            name="remember"
-            valuePropName="checked"
-            wrapperCol={{ offset: 8, span: 16 }}
-          >
-            <Checkbox>记住我</Checkbox>
-          </Form.Item>
-
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{
+                marginTop: "2vh",
+              }}
+            >
               登陆
             </Button>
           </Form.Item>

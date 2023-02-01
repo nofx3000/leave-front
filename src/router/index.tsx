@@ -1,11 +1,8 @@
-import {
-  RouterProvider,
-  Navigate,
-  createHashRouter,
-} from "react-router-dom";
+import { RouterProvider, Navigate, createHashRouter } from "react-router-dom";
 import JwtAuth from "../utils/JwtAuth";
 import Login from "../views/Login/Login";
 import Index from "../views/Index/Index";
+import Home from "../views/Home/Home";
 
 const router = createHashRouter([
   {
@@ -19,28 +16,16 @@ const router = createHashRouter([
         <Index />
       </JwtAuth>
     ),
-    // children: [
-    //   {
-    //     index: true,
-    //     element: <Navigate to="/home"></Navigate>,
-    //   },
-    //   {
-    //     path: "home",
-    //     element: <Home />,
-    //   },
-    //   {
-    //     path: "basic-info",
-    //     element: <BasicInfo />,
-    //   },
-    //   {
-    //     path: "input-record",
-    //     element: <InputRecord />,
-    //   },
-    //   {
-    //     path: "check-info",
-    //     element: <CheckInfo></CheckInfo>,
-    //   },
-    // ],
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/home"></Navigate>,
+      },
+      {
+        path: "home",
+        element: <Home />,
+      },
+    ],
   },
 ]);
 

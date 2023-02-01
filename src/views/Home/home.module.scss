@@ -1,0 +1,29 @@
+.card {
+  height: 90vh;
+}
+.title {
+  font-size: 2vh;
+  color: rgb(54, 53, 53);
+  font-weight: 500;
+  margin-left: 1vw;
+}
+.table {
+  margin-top: 1vh;
+}
+.dashboard-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-left: 2vw;
+}
+
+.dashboard {
+  display: flex;
+  justify-content: center;
+  height: 28vh;
+  p {
+    text-align: center;
+    font-size: 1vh;
+    font-weight: bold;
+  }
+}

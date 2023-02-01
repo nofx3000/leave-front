@@ -14,11 +14,15 @@ import { selectMenuList, getMenuListAsync } from "../../store/slices/menuSlice";
 interface MenuItemInter {
   id: number;
   label: string;
-  path: string;
-  icon: string | ReactNode;
+  // path: string;
+  // icon: string | ReactNode;
   type?: string;
   children?: any;
-  key?: number;
+  key?: string;
+}
+
+interface RawMenuItemObj {
+  [id: number]: MenuItemInter;
 }
 
 interface StringToIconInter {
@@ -35,18 +39,32 @@ const stringToIconMap: StringToIconInter = {
 const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const menuList: MenuItemInter[] = useSelector(selectMenuList);
+  const menuList: RawMenuItemObj = useSelector(selectMenuList);
   useEffect(() => {
     dispatch(getMenuListAsync());
   }, [dispatch]);
-  function formatMenuList(menuList: MenuItemInter[]): MenuItemInter[] {
-    return menuList.map((item) => {
-      return Object.assign({}, item, {
-        key: item.path,
-        icon: stringToIconMap[item.icon as string],
-      });
-    });
+  function formatMenuList(menuObj: RawMenuItemObj) {
+    const menuList: MenuItemInter[] = [
+      {
+        id: 0,
+        label: "首页",
+        key: "/home",
+      },
+    ];
+    for (const id in menuObj) {
+      menuList.push(menuObj[id]);
+    }
+    console.log(menuList);
+    return menuList;
   }
+  // function formatMenuList(menuList: MenuItemInter[]): MenuItemInter[] {
+  //   return menuList.map((item) => {
+  //     return Object.assign({}, item, {
+  //       key: item.path,
+  //       icon: stringToIconMap[item.icon as string],
+  //     });
+  //   });
+  // }
 
   return (
     <>
