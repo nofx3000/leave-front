@@ -1,17 +1,18 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, AppDispatch, AppThunk } from "../store";
 import axios from "axios";
+import {UserInfoInter} from '../../interface/UserInterface'
 
-interface UserinfoInter {
-  id?: number;
-  username?: string;
-  role?: "admin" | "user";
-  exp?: number;
-  iat?: number;
-}
+// interface UserinfoInter {
+//   id?: number;
+//   username?: string;
+//   role?: "admin" | "user";
+//   exp?: number;
+//   iat?: number;
+// }
 
 export interface UserinfoState {
-  userinfo?: UserinfoInter;
+  userinfo?: UserInfoInter;
   token?: string;
 }
 
@@ -25,7 +26,9 @@ const initialState: UserinfoState = {
 export const verifyTokenAsync = createAsyncThunk(
   "userinfo/verifyToken",
   async () => {
-    const res = await axios.get("/users/verify1");
+    const res = await axios.get("/login/verify1");
+    console.log('--------------in userSlice-----------------', res);
+    
     // The value we return becomes the `fulfilled` action payload
     return res.data;
   }

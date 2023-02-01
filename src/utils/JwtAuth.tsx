@@ -18,34 +18,29 @@ export default function JwtAuth(props: any) {
   // 3.userinfo的exp时间是否过期（exp*1000）
   // 4.axios——verify
   const navigate = useNavigate();
-  const token: string | null = window.localStorage.getItem("token");
-  if (!token) {
-    navigate("/login");
-    message.error("请先登陆");
-  }
-  axios.defaults.headers["authorization"] = token;
 
   // !!!CAUTION!!! useDispatch泛型给AppDispatch，dispatch异步方法会报错
-  // const dispatch = useDispatch<AppDispatch>();
-  // const token = useSelector(selectToken);
-  // // navigate要放在useEffect里，否则会出现跳转失败的问题
-  // useEffect(() => {
-  //   if (!token) {
-  //     console.log(123);
-  //     navigate("/login");
-  //     // return;
-  //   } else {
-  //     axios.defaults.headers["authorization"] = token;
-  //     verify();
-  //   }
-  // }, [token]);
+  const dispatch = useDispatch<AppDispatch>();
+  const token = useSelector(selectToken);
+  // navigate要放在useEffect里，否则会出现跳转失败的问题
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      // return;
+    } else {
+      axios.defaults.headers["authorization"] = token;
+      verify();
+    }
+  }, [token]);
 
-  // async function verify() {
-  //   try {
-  //     const res = await dispatch(verifyTokenAsync());
-  //   } catch (err) {
-  //     navigate("/login");
-  //   }
-  // }
+  async function verify() {
+    try {
+      const res = await dispatch(verifyTokenAsync());
+      console.log('--------------in jwtauth-------------------', res);
+    } catch (err) {
+      message.error('沒有登錄信息，請重新登陸')
+      navigate("/login");
+    }
+  }
   return props.children;
 }

@@ -3,6 +3,7 @@ import JwtAuth from "../utils/JwtAuth";
 import Login from "../views/Login/Login";
 import Index from "../views/Index/Index";
 import Home from "../views/Home/Home";
+import UserList from '../views/UserList/UserList'
 
 const router = createHashRouter([
   {
@@ -24,6 +25,10 @@ const router = createHashRouter([
       {
         path: "home",
         element: <Home />,
+      },
+      {
+        path: "userList",
+        element: <UserList />,
       },
     ],
   },

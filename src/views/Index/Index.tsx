@@ -15,7 +15,7 @@ const App: React.FC = () => {
           <Menu className="s" />
         </Sider>
         <Content className={style.content}>
-          content
+          <Outlet />
         </Content>
       </Layout>
     </Layout>
