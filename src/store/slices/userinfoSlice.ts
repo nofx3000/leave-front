@@ -1,19 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, AppDispatch, AppThunk } from "../store";
 import axios from "axios";
-import {UserInfoInter} from '../../interface/UserInterface'
-
-// interface UserinfoInter {
-//   id?: number;
-//   username?: string;
-//   role?: "admin" | "user";
-//   exp?: number;
-//   iat?: number;
-// }
+import { UserInfoInter } from "../../interface/UserInterface";
 
 export interface UserinfoState {
   userinfo?: UserInfoInter;
   token?: string;
+  openModal: boolean;
 }
 
 const initialState: UserinfoState = {
@@ -21,14 +14,13 @@ const initialState: UserinfoState = {
   token: window.localStorage.getItem("token")
     ? (window.localStorage.getItem("token") as string)
     : undefined,
+  openModal: false,
 };
 
 export const verifyTokenAsync = createAsyncThunk(
   "userinfo/verifyToken",
   async () => {
-    const res = await axios.get("/login/verify1");
-    console.log('--------------in userSlice-----------------', res);
-    
+    const res = await axios.get("/user/verify1");
     // The value we return becomes the `fulfilled` action payload
     return res.data;
   }
@@ -41,6 +33,9 @@ export const userinfoSlice = createSlice({
   reducers: {
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
+    },
+    setOpenModel: (state, action: PayloadAction<boolean>) => {
+      state.openModal = action.payload;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -56,11 +51,14 @@ export const userinfoSlice = createSlice({
   },
 });
 
-export const { setToken } = userinfoSlice.actions;
+export const { setToken, setOpenModel } = userinfoSlice.actions;
 // !!!CAUTION!!! select中state后面要接reducer名，而不是slice名
 export const selectUserinfo = (state: RootState) =>
   state.userinfoReducer.userinfo;
 
 export const selectToken = (state: RootState) => state.userinfoReducer.token;
+
+export const selectOpenModel = (state: RootState) =>
+  state.userinfoReducer.openModal;
 
 export default userinfoSlice.reducer;
