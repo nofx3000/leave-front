@@ -1,12 +1,15 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import { getDefaultMiddleware } from "@reduxjs/toolkit"
+import { getDefaultMiddleware } from "@reduxjs/toolkit";
 
 import userinfoReducer from "./slices/userinfoSlice";
 import menuReducer from "./slices/menuSlice";
+import roleReducer from "./slices/roleSlice";
+
 const store = configureStore({
   reducer: {
     userinfoReducer,
     menuReducer,
+    roleReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

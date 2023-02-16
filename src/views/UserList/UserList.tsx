@@ -6,58 +6,38 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import axios from "axios";
 import { RoleInter } from "../../interface/RoleInterface";
-import { setOpenModel } from "../../store/slices/userinfoSlice";
+import {
+  setOpenUserFormModal,
+  selectUserList,
+  getUserListAsync,
+} from "../../store/slices/userinfoSlice";
+import { selectRoleList } from "../../store/slices/roleSlice";
 import UserForm from "../../components/UserForm/UserForm";
+import { roleIdToRoleName, formatCatagory } from "../../utils/formaters";
 
-const formatCatagory = (catagory: number) => {
-  switch (catagory) {
-    case 0:
-      return "干部";
-    case 1:
-      return "军士";
-    case 2:
-      return "文职";
-    default:
-      break;
-  }
-};
-
-const roleIdToRoleName = (
-  roleid: number,
-  roleList: RoleInter[]
-): string | void => {
-  const role: RoleInter | undefined = roleList.find((item) => {
-    return item.id === roleid;
-  });
-  if (role) {
-    return role.role_name;
-  }
-};
+export type StatusType = "add" | "edit";
 
 const App: React.FC = () => {
+  const [status, setStatus] = useState<StatusType>("add");
+  const [userId, setUserId] = useState<number | undefined>(undefined);
   const dispatch = useDispatch<AppDispatch>();
-  const [userList, setUserList] = useState<Partial<UserInfoInter>[]>([]);
-  const [roleList, setRoleList] = useState<RoleInter[]>([]);
+  const userList = useSelector(selectUserList);
+  const roleList = useSelector(selectRoleList);
 
-  useEffect(() => {
-    // 获取用户列表
-    const getUserList = async () => {
-      const res = await axios.get("/user");
-      console.log("用户列表", res.data.data);
-      await setUserList(res.data.data);
-    };
-    getUserList();
-    // 获取角色列表
-    const getRoleList = async () => {
-      const res = await axios.get("/role");
-      await setRoleList(res.data.data);
-      console.log("角色列表", roleList);
-    };
-    getRoleList();
-  }, []);
+  const handleAdd = () => {
+    setStatus("add");
+    dispatch(setOpenUserFormModal(true));
+  };
 
-  const showModal = () => {
-    dispatch(setOpenModel(true));
+  const handleDelete = async (id: number) => {
+    await axios.delete(`/user/${id}`);
+    dispatch(getUserListAsync());
+  };
+
+  const handleEdit = async (id: number) => {
+    setStatus("edit");
+    setUserId(id);
+    dispatch(setOpenUserFormModal(true));
   };
 
   // 表结构
@@ -83,16 +63,28 @@ const App: React.FC = () => {
       key: "role_id",
       dataIndex: "role_id",
       render: (_, { role_id }) => (
-        <>{roleIdToRoleName(role_id as number, roleList)}</>
+        <>{roleIdToRoleName(role_id as number, roleList as RoleInter[])}</>
       ),
     },
     {
       title: "操作",
       key: "option",
-      render: (_, record) => (
+      render: (_, { id }) => (
         <Space size="middle">
-          <a>編輯</a>
-          <a>刪除</a>
+          <a
+            onClick={() => {
+              handleEdit(id as number);
+            }}
+          >
+            編輯
+          </a>
+          <a
+            onClick={() => {
+              handleDelete(id as number);
+            }}
+          >
+            刪除
+          </a>
         </Space>
       ),
     },
@@ -100,11 +92,11 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Button type="primary" onClick={showModal}>
+      <Button type="primary" onClick={handleAdd}>
         添加用户
       </Button>
-      <Table columns={columns} dataSource={userList} rowKey="id" />;
-      <UserForm />
+      <Table columns={columns} dataSource={userList} rowKey="id" />
+      <UserForm status={status} userId={userId ? userId : undefined} />
     </>
   );
 };

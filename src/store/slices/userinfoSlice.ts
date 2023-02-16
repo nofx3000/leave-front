@@ -5,16 +5,18 @@ import { UserInfoInter } from "../../interface/UserInterface";
 
 export interface UserinfoState {
   userinfo?: UserInfoInter;
+  userList?: UserInfoInter[];
   token?: string;
-  openModal: boolean;
+  openUserFormModal: boolean;
 }
 
 const initialState: UserinfoState = {
   userinfo: undefined,
+  userList: [],
   token: window.localStorage.getItem("token")
     ? (window.localStorage.getItem("token") as string)
     : undefined,
-  openModal: false,
+  openUserFormModal: false,
 };
 
 export const verifyTokenAsync = createAsyncThunk(
@@ -26,6 +28,15 @@ export const verifyTokenAsync = createAsyncThunk(
   }
 );
 
+export const getUserListAsync = createAsyncThunk(
+  "userinfo/getUserListAsync",
+  async () => {
+    const res = await axios.get("/user");
+    // The value we return becomes the `fulfilled` action payload
+    return res.data.data;
+  }
+);
+
 export const userinfoSlice = createSlice({
   name: "userinfo",
   initialState,
@@ -34,8 +45,8 @@ export const userinfoSlice = createSlice({
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
     },
-    setOpenModel: (state, action: PayloadAction<boolean>) => {
-      state.openModal = action.payload;
+    setOpenUserFormModal: (state, action: PayloadAction<boolean>) => {
+      state.openUserFormModal = action.payload;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -48,10 +59,17 @@ export const userinfoSlice = createSlice({
       console.log("rejected");
       throw Error("token is not authenticated");
     });
+    builder.addCase(getUserListAsync.fulfilled, (state, action) => {
+      state.userList = action.payload;
+    });
+    builder.addCase(getUserListAsync.rejected, (state, action) => {
+      console.log("rejected");
+      throw Error("getUserListAsync failed in redux");
+    });
   },
 });
 
-export const { setToken, setOpenModel } = userinfoSlice.actions;
+export const { setToken, setOpenUserFormModal } = userinfoSlice.actions;
 // !!!CAUTION!!! select中state后面要接reducer名，而不是slice名
 export const selectUserinfo = (state: RootState) =>
   state.userinfoReducer.userinfo;
@@ -59,6 +77,9 @@ export const selectUserinfo = (state: RootState) =>
 export const selectToken = (state: RootState) => state.userinfoReducer.token;
 
 export const selectOpenModel = (state: RootState) =>
-  state.userinfoReducer.openModal;
+  state.userinfoReducer.openUserFormModal;
+
+export const selectUserList = (state: RootState) =>
+  state.userinfoReducer.userList;
 
 export default userinfoSlice.reducer;
