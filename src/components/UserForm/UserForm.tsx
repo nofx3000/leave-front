@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 // -------------------------redux-------------------------
 import { AppDispatch } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +17,11 @@ import { RoleInter } from "../../interface/RoleInterface";
 import { StatusType } from "../../views/UserList/UserList";
 // -------------------------utils-------------------------
 import axios from "axios";
-import { formatCatagory, userListToUserMap } from "../../utils/formaters";
+import {
+  formatCatagory,
+  listToMap,
+  objToFieldDataArray,
+} from "../../utils/formaters";
 import { UserInfoInter } from "../../interface/UserInterface";
 
 interface UserFormProps {
@@ -33,10 +37,20 @@ const App: React.FC<UserFormProps> = (props) => {
   const message = staticFunction.message;
   // ------------------------- initialize -------------------------
   const formRef = useRef(null);
-  const openModel = useSelector(selectOpenModel);
+  const openModal = useSelector(selectOpenModel);
   const roleList = useSelector(selectRoleList);
   const userList: UserInfoInter[] | undefined = useSelector(selectUserList);
-  const userMap = userListToUserMap(userList as UserInfoInter[]);
+  const userMap = listToMap(userList as UserInfoInter[]);
+  // ------------------------- useEffect -------------------------
+  useEffect(() => {
+    if (openModal) {
+      if (status === "edit" && userId) {
+        (formRef.current as any).setFields(
+          objToFieldDataArray(userMap[userId])
+        );
+      }
+    }
+  }, [openModal]);
   // ------------------------- handelers -------------------------
   const handleOk = () => {
     // 表单提交
@@ -76,7 +90,8 @@ const App: React.FC<UserFormProps> = (props) => {
     <>
       <Modal
         title={`${status === "add" ? "添加" : "编辑"}用户`}
-        open={openModel}
+        open={openModal}
+        onCancel={handleCancel}
         footer={[
           <Popconfirm
             placement="top"
@@ -88,7 +103,7 @@ const App: React.FC<UserFormProps> = (props) => {
             okText="Yes"
             cancelText="No"
           >
-            <Button onClick={handleCancel}>取消</Button>
+            <Button>取消</Button>
           </Popconfirm>,
           <Button type="primary" onClick={handleOk}>
             提交
@@ -100,9 +115,9 @@ const App: React.FC<UserFormProps> = (props) => {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
           style={{ maxWidth: 600 }}
-          initialValues={
-            status === "edit" && userId ? userMap[userId as number] : {}
-          }
+          // initialValues={
+          //   status === "edit" && userId ? userMap[userId as number] : {}
+          // }
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"

@@ -6,6 +6,7 @@ import Menu from "../../components/Menu/Menu";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { getRoleList } from "../../store/slices/roleSlice";
+import { getRightList } from "../../store/slices/rightSlice";
 import { getUserListAsync } from "../../store/slices/userinfoSlice";
 
 const { Header, Sider, Content } = Layout;
@@ -16,6 +17,7 @@ const App: React.FC = () => {
   useEffect(() => {
     dispatch(getRoleList());
     dispatch(getUserListAsync());
+    dispatch(getRightList());
   });
   return (
     <Layout>

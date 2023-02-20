@@ -4,12 +4,14 @@ import { getDefaultMiddleware } from "@reduxjs/toolkit";
 import userinfoReducer from "./slices/userinfoSlice";
 import menuReducer from "./slices/menuSlice";
 import roleReducer from "./slices/roleSlice";
+import rightReducer from "./slices/rightSlice";
 
 const store = configureStore({
   reducer: {
     userinfoReducer,
     menuReducer,
     roleReducer,
+    rightReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
