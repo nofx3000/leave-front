@@ -9,7 +9,7 @@ import {
   setOpenRoleFormModal,
 } from "../../store/slices/roleSlice";
 // -------------------------antd & components-------------------------
-import { Button, Modal, Form, Input, Popconfirm, Radio } from "antd";
+import { Button, Modal, Form, Input, Popconfirm } from "antd";
 import { App as globalAntd } from "antd";
 import Tree from "../../components/Tree/Tree";
 // -------------------------types-------------------------
@@ -79,6 +79,10 @@ const App: React.FC<RoleFormProps> = (props) => {
     message.error("请按要求填写表单");
   };
 
+  const treeCallBack = (listString: string) => {
+    (formRef.current as any).setFieldValue('right_list', listString)
+  }
+
   // ------------------------- JSX -------------------------
   return (
     <>
@@ -122,7 +126,7 @@ const App: React.FC<RoleFormProps> = (props) => {
             <Input />
           </Form.Item>
           <Form.Item label="权限" name="right_list">
-            <Tree roleId={roleId ? roleId : undefined} />
+            {openModal && <Tree status={status} roleId={roleId ? roleId : undefined} treeCallBack={treeCallBack}/>}
           </Form.Item>
         </Form>
       </Modal>

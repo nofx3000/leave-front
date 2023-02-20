@@ -41,7 +41,7 @@ const App: React.FC = () => {
     });
     return _role;
   });
-  console.log(roleListWithRightObj);
+  // console.log(roleListWithRightObj);
 
   const handleAdd = () => {
     setStatus("add");

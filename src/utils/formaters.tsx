@@ -68,11 +68,11 @@ export const listToTree = <T extends RightInter>(list: T[]) => {
   // 处理一级right
   const tree = list.reduce((acc: any, cur: T) => {
     if (cur && cur.pid === 0) {
-      acc.push({
+      acc[cur.id] = {
         key: cur.id,
         children: [],
         title: cur.right_name,
-      });
+      };
       return acc;
     } else {
       return acc;
