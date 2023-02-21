@@ -54,7 +54,6 @@ const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
     for (const id in menuObj) {
       menuList.push(menuObj[id]);
     }
-    console.log(menuList);
     return menuList;
   }
   // function formatMenuList(menuList: MenuItemInter[]): MenuItemInter[] {

@@ -36,9 +36,8 @@ export default function JwtAuth(props: any) {
   async function verify() {
     try {
       const res = await dispatch(verifyTokenAsync());
-      console.log('--------------in jwtauth-------------------', res);
     } catch (err) {
-      message.error('沒有登錄信息，請重新登陸')
+      message.error("沒有登錄信息，請重新登陸");
       navigate("/login");
     }
   }
