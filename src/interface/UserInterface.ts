@@ -3,8 +3,8 @@ export interface UserInfoInter {
   username: string;
   password: string;
   role_id: number;
-  real_name: string;
-  catagory: number
+  realname: string;
+  catagory: number;
 }
 
 export interface LoginInter {

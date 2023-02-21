@@ -5,6 +5,7 @@ import Index from "../views/Index/Index";
 import Home from "../views/Home/Home";
 import UserList from "../views/UserList/UserList";
 import RoleList from "../views/RoleList/RoleList";
+import TaskList from "../views/TaskList/TaskList";
 
 const router = createHashRouter([
   {
@@ -34,6 +35,10 @@ const router = createHashRouter([
       {
         path: "roleList",
         element: <RoleList />,
+      },
+      {
+        path: "taskList",
+        element: <TaskList />,
       },
     ],
   },

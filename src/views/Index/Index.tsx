@@ -8,6 +8,7 @@ import { AppDispatch } from "../../store/store";
 import { getRoleList } from "../../store/slices/roleSlice";
 import { getRightList } from "../../store/slices/rightSlice";
 import { getUserListAsync } from "../../store/slices/userinfoSlice";
+import { getTaskList } from "../../store/slices/taskSlice";
 
 const { Header, Sider, Content } = Layout;
 
@@ -18,6 +19,7 @@ const App: React.FC = () => {
     dispatch(getRoleList());
     dispatch(getUserListAsync());
     dispatch(getRightList());
+    dispatch(getTaskList());
   });
   return (
     <Layout>

@@ -5,6 +5,7 @@ import userinfoReducer from "./slices/userinfoSlice";
 import menuReducer from "./slices/menuSlice";
 import roleReducer from "./slices/roleSlice";
 import rightReducer from "./slices/rightSlice";
+import taskReducer from "./slices/taskSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     menuReducer,
     roleReducer,
     rightReducer,
+    taskReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
