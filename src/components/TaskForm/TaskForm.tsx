@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // -------------------------redux-------------------------
 import { AppDispatch } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +35,8 @@ const App: React.FC<TaskFormProps> = (props) => {
   const openModal = useSelector(selectOpenModel);
   const taskList: TaskInter[] | undefined = useSelector(selectTaskList);
   const taskMap = listToMap<TaskInter>(taskList as TaskInter[]);
+  // 控制点击提交时UserCascader给form.item赋值
+  const [cascaderTrigger, setCascaderTrigger] = useState<boolean>(false);
   // ------------------------- useEffect -------------------------
   useEffect(() => {
     if (openModal) {
@@ -48,8 +50,15 @@ const App: React.FC<TaskFormProps> = (props) => {
 
   // ------------------------- handelers -------------------------
   const handleOk = () => {
+    setCascaderTrigger(true);
     // 表单提交
     (formRef.current as any).submit();
+  };
+
+  const onTriggerd = (value: any) => {
+    // 获取UserCascader传出的数据并附给表单项
+    (formRef.current as any).setFieldValue("operator_list", value.join());
+    setCascaderTrigger(false);
   };
 
   const handleCancel = () => {
@@ -58,7 +67,13 @@ const App: React.FC<TaskFormProps> = (props) => {
   };
 
   const onFinish = async (values: any) => {
-    console.log("Success:", values);
+    // 发送添加或编辑请求
+    sendRequest();
+  };
+
+  const sendRequest = async () => {
+    const values = (formRef.current as any).getFieldsValue();
+    console.log(values);
     let res;
     if (status === "add") {
       res = await axios.post("/task", values);
@@ -68,12 +83,13 @@ const App: React.FC<TaskFormProps> = (props) => {
       }
     }
     if (!res || res.data.errno !== 0) {
-      message.error(`${status === "add" ? "添加" : "编辑"}角色失败`);
+      message.error(`${status === "add" ? "添加" : "编辑"}任务失败`);
       return;
     }
-    message.success(`${status === "add" ? "添加" : "编辑"}角色成功`);
+    message.success(`${status === "add" ? "添加" : "编辑"}任务成功`);
     dispatch(setOpenTaskFormModal(false));
     dispatch(getTaskList());
+    (formRef.current as any).resetFields();
   };
 
   const onFinishFailed = (error: any) => {
@@ -123,7 +139,16 @@ const App: React.FC<TaskFormProps> = (props) => {
             <Input />
           </Form.Item>
           <Form.Item label="参与人员" name="operator_list">
-            <UserCascader />
+            <UserCascader
+              trigger={cascaderTrigger}
+              onTriggered={onTriggerd}
+              status={status}
+              operator_list={
+                status === "edit" && taskId
+                  ? taskMap[taskId].operator_list
+                  : undefined
+              }
+            />
           </Form.Item>
         </Form>
       </Modal>
