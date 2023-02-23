@@ -79,6 +79,13 @@ const App: React.FC<LeaveFormProps> = (props) => {
   };
 
   const onFinish = async (values: any) => {
+    // 此处手动添加表单校验
+    // 因为operator_list表单项是在点击提交后才进行赋值
+    // 所以无法使用antd的自定义validator进行校验
+    if (!values.operator_list || values.operator_list.trim().split(',').length < 1) {
+      message.error('请选择至少一名作业员')
+      return
+    }
     // 发送添加或编辑请求
     sendRequest();
   };
@@ -94,7 +101,7 @@ const App: React.FC<LeaveFormProps> = (props) => {
       }
     }
     if (!res || res.data.errno !== 0) {
-      message.error(`${status === "add" ? "添加" : "编辑"}调休失败`);
+      message.error(`${status === "add" ? "添加" : "编辑"}调休失败, ${res?.data.message}`);
       return;
     }
     message.success(`${status === "add" ? "添加" : "编辑"}调休成功`);
@@ -141,16 +148,18 @@ const App: React.FC<LeaveFormProps> = (props) => {
           ref={formRef}
         >
           <Form.Item label="倒休人员" name="operator_list">
-            <UserCascader
+            {
+              status === "add" ? (<UserCascader
               trigger={cascaderTrigger}
               onTriggered={onTriggerd}
               status={status}
-            />
+            />) : <span>{leaveMap[leaveId as number].user?.realname}</span>
+            }
           </Form.Item>
           <Form.Item label="关联任务" name="task_id">
             <Select>
               {taskList?.map((task: TaskInter) => (
-                <Select.Option value={task.id}>{task.task_name}</Select.Option>
+                <Select.Option value={task.id} key={task.id}>{task.task_name}</Select.Option>
               ))}
             </Select>
           </Form.Item>
