@@ -54,6 +54,11 @@ const App: React.FC = () => {
       key: "id",
     },
     {
+      title: "中队",
+      key: "division",
+      render: (_, { user }) => <span>{user?.division?.realname}</span>,
+    },
+    {
       title: "时长(小时)",
       dataIndex: "length",
       key: "length",
@@ -64,9 +69,14 @@ const App: React.FC = () => {
       render: (_, { user }) => <span>{user?.realname}</span>,
     },
     {
-      title: "任务",
+      title: "关联任务",
       key: "task",
       render: (_, { task }) => <span>{task?.task_name}</span>,
+    },
+    {
+      title: "备注",
+      key: "comment",
+      dataIndex: "comment",
     },
     {
       title: "申请时间",

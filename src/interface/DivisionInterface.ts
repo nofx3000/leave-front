@@ -2,6 +2,6 @@ import { UserInfoInter } from "./UserInterface";
 
 export interface DivisionInter {
   id: number;
-  name: string;
+  realname: string;
   users?: UserInfoInter[];
 }
