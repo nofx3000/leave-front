@@ -6,6 +6,7 @@ import menuReducer from "./slices/menuSlice";
 import roleReducer from "./slices/roleSlice";
 import rightReducer from "./slices/rightSlice";
 import taskReducer from "./slices/taskSlice";
+import leaveReducer from "./slices/leaveSlice";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     roleReducer,
     rightReducer,
     taskReducer,
+    leaveReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

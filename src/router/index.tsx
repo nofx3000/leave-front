@@ -6,6 +6,9 @@ import Home from "../views/Home/Home";
 import UserList from "../views/UserList/UserList";
 import RoleList from "../views/RoleList/RoleList";
 import TaskList from "../views/TaskList/TaskList";
+import LeaveListAll from "../views/LeaveList/LeaveListAll";
+import LeaveListDivision from "../views/LeaveList/LeaveListDivision";
+import LeaveListUser from "../views/LeaveList/LeaveListUser";
 
 const router = createHashRouter([
   {
@@ -39,6 +42,18 @@ const router = createHashRouter([
       {
         path: "taskList",
         element: <TaskList />,
+      },
+      {
+        path: "leaveListAll",
+        element: <LeaveListAll />,
+      },
+      {
+        path: "leaveListDivision",
+        element: <LeaveListDivision />,
+      },
+      {
+        path: "leaveListUser",
+        element: <LeaveListUser />,
       },
     ],
   },

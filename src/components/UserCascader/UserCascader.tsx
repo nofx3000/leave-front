@@ -44,6 +44,7 @@ const App: React.FC<UserCascaderProps> = (props) => {
       const res = await axios.get("/user/division");
       if (res.data.errno === 0) {
         setUserListByDivision(res.data.data);
+        console.log(res.data.data);
       } else {
         message.error("获取级联选择器数据失败");
       }
@@ -69,6 +70,7 @@ const App: React.FC<UserCascaderProps> = (props) => {
           onClose={() => {
             onClose(id);
           }}
+          key={id}
         >
           {userMap[id as any].realname}
         </Tag>
@@ -80,7 +82,7 @@ const App: React.FC<UserCascaderProps> = (props) => {
         onChange={(e: any) => {
           onChange(e);
         }}
-        fieldNames={{ label: "realname", value: "id", children: "people" }}
+        fieldNames={{ label: "realname", value: "id", children: "users" }}
       />
     </>
   );
