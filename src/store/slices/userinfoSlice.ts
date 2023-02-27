@@ -24,7 +24,7 @@ export const verifyTokenAsync = createAsyncThunk(
   async () => {
     const res = await axios.get("/user/verify1");
     // The value we return becomes the `fulfilled` action payload
-    return res.data;
+    return res.data.data;
   }
 );
 

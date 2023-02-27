@@ -1,88 +1,134 @@
-import React from "react";
-import { Space, Table, Tag } from "antd";
+import React, { useEffect, useState } from "react";
+import { Space, Switch, Table, Button, message, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { LeaveInter } from "../../interface/LeaveInterface";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../store/store";
+import axios from "axios";
+import {
+  setOpenLeaveFormModal,
+  getLeaveListDivisionAsync,
+  selectLeaveList,
+} from "../../store/slices/leaveSlice";
+import { selectUserinfo } from "../../store/slices/userinfoSlice";
+import LeaveForm from "../../components/LeaveForm/LeaveForm";
+import dateFormat from "dateformat";
+import { UserInfoInter } from "../../interface/UserInterface";
 
-interface DataType {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
-}
+export type StatusType = "add" | "edit";
 
-const columns: ColumnsType<DataType> = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-    render: (text) => <a>{text}</a>,
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "Tags",
-    key: "tags",
-    dataIndex: "tags",
-    render: (_, { tags }) => (
-      <>
-        {tags.map((tag) => {
-          let color = tag.length > 5 ? "geekblue" : "green";
-          if (tag === "loser") {
-            color = "volcano";
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </>
-    ),
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <a>Invite {record.name}</a>
-        <a>Delete</a>
-      </Space>
-    ),
-  },
-];
+const App: React.FC = () => {
+  const [status, setStatus] = useState<StatusType>("add");
+  const [leaveId, setLeaveId] = useState<number | undefined>(undefined);
+  const dispatch = useDispatch<AppDispatch>();
+  const leaveList = useSelector(selectLeaveList);
+  const userinfo: UserInfoInter | undefined = useSelector(selectUserinfo);
 
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
+  useEffect(() => {
+    if (userinfo) {
+      dispatch(getLeaveListDivisionAsync(userinfo.division_id));
+    }
+  }, [userinfo]);
 
-const App: React.FC = () => <Table columns={columns} dataSource={data} />;
+  const handleAdd = () => {
+    setStatus("add");
+    dispatch(setOpenLeaveFormModal(true));
+  };
+
+  const handleDelete = async (id: number) => {
+    await axios.delete(`/leave/${id}`);
+    dispatch(
+      getLeaveListDivisionAsync((userinfo as UserInfoInter).division_id)
+    );
+  };
+
+  const handleEdit = async (id: number) => {
+    setStatus("edit");
+    setLeaveId(id);
+    dispatch(setOpenLeaveFormModal(true));
+  };
+
+  // 表结构
+  const columns: ColumnsType<LeaveInter> = [
+    {
+      title: "id",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "中队",
+      key: "division",
+      render: (_, { user }) => <span>{user?.division?.realname}</span>,
+    },
+    {
+      title: "时长(小时)",
+      dataIndex: "length",
+      key: "length",
+    },
+    {
+      title: "作业员",
+      key: "operator",
+      render: (_, { user }) => <span>{user?.realname}</span>,
+    },
+    {
+      title: "关联任务",
+      key: "task",
+      render: (_, { task }) => <span>{task?.task_name}</span>,
+    },
+    {
+      title: "备注",
+      key: "comment",
+      dataIndex: "comment",
+    },
+    {
+      title: "申请时间",
+      key: "created_at",
+      render: (_, { created_at }) => (
+        <span>{dateFormat(created_at, "yyyy-mm-dd")}</span>
+      ),
+    },
+    {
+      title: "审核状态",
+      key: "approved",
+      render: (_, { id, approved }) => (
+        <Tag color={approved ? "green" : "red"}>
+          {approved ? "通过" : "尚未通过"}
+        </Tag>
+      ),
+    },
+    {
+      title: "操作",
+      key: "option",
+      render: (_, { id }) => (
+        <Space size="middle">
+          <a
+            onClick={() => {
+              handleEdit(id as number);
+            }}
+          >
+            編輯
+          </a>
+          <a
+            onClick={() => {
+              handleDelete(id as number);
+            }}
+          >
+            刪除
+          </a>
+        </Space>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      <Button type="primary" onClick={handleAdd}>
+        申请调休
+      </Button>
+      <Table columns={columns} dataSource={leaveList} rowKey="id" />
+      <LeaveForm status={status} leaveId={leaveId ? leaveId : undefined} />
+    </>
+  );
+};
 
 export default App;

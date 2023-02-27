@@ -1,119 +1,132 @@
-import React, { useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import { Space, Switch, Table, Button, Tag } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import { LeaveInter } from "../../interface/LeaveInterface";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../store/store";
+import axios from "axios";
 import {
-  Form,
-  Input,
-  Button,
-  Radio,
-  Select,
-  Cascader,
-  DatePicker,
-  InputNumber,
-  TreeSelect,
-  Switch,
-  Checkbox,
-  Upload,
-} from "antd";
+  setOpenLeaveFormModal,
+  getLeaveListUserAsync,
+  selectLeaveList,
+} from "../../store/slices/leaveSlice";
+import { selectUserinfo } from "../../store/slices/userinfoSlice";
+import LeaveForm from "../../components/LeaveForm/LeaveForm";
+import dateFormat from "dateformat";
+import { UserInfoInter } from "../../interface/UserInterface";
 
-const { RangePicker } = DatePicker;
-const { TextArea } = Input;
+export type StatusType = "add" | "edit";
 
-const onFinish = (values: any) => {
-  console.log("Success:", values);
-};
+const App: React.FC = () => {
+  const [status, setStatus] = useState<StatusType>("add");
+  const [leaveId, setLeaveId] = useState<number | undefined>(undefined);
+  const dispatch = useDispatch<AppDispatch>();
+  const leaveList = useSelector(selectLeaveList);
+  const userinfo: UserInfoInter | undefined = useSelector(selectUserinfo);
 
-const onFinishFailed = (errorInfo: any) => {
-  console.log("Failed:", errorInfo);
-};
+  useEffect(() => {
+    if (userinfo) {
+      dispatch(getLeaveListUserAsync(userinfo.id));
+    }
+  }, [userinfo]);
 
-const FormDisabledDemo: React.FC = () => {
-  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
+  const handleAdd = () => {
+    setStatus("add");
+    dispatch(setOpenLeaveFormModal(true));
+  };
+
+  const handleDelete = async (id: number) => {
+    await axios.delete(`/leave/${id}`);
+    dispatch(getLeaveListUserAsync((userinfo as UserInfoInter).id));
+  };
+
+  const handleEdit = async (id: number) => {
+    setStatus("edit");
+    setLeaveId(id);
+    dispatch(setOpenLeaveFormModal(true));
+  };
+
+  // // 表结构
+  const columns: ColumnsType<LeaveInter> = [
+    {
+      title: "id",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "中队",
+      key: "division",
+      render: (_, { user }) => <span>{user?.division?.realname}</span>,
+    },
+    {
+      title: "时长(小时)",
+      dataIndex: "length",
+      key: "length",
+    },
+    {
+      title: "作业员",
+      key: "operator",
+      render: (_, { user }) => <span>{user?.realname}</span>,
+    },
+    {
+      title: "关联任务",
+      key: "task",
+      render: (_, { task }) => <span>{task?.task_name}</span>,
+    },
+    {
+      title: "备注",
+      key: "comment",
+      dataIndex: "comment",
+    },
+    {
+      title: "申请时间",
+      key: "created_at",
+      render: (_, { created_at }) => (
+        <span>{dateFormat(created_at, "yyyy-mm-dd")}</span>
+      ),
+    },
+    {
+      title: "审核状态",
+      key: "approved",
+      render: (_, { id, approved }) => (
+        <Tag color={approved ? "green" : "red"}>
+          {approved ? "通过" : "尚未通过"}
+        </Tag>
+      ),
+    },
+    {
+      title: "操作",
+      key: "option",
+      render: (_, { id }) => (
+        <Space size="middle">
+          <a
+            onClick={() => {
+              handleEdit(id as number);
+            }}
+          >
+            編輯
+          </a>
+          <a
+            onClick={() => {
+              handleDelete(id as number);
+            }}
+          >
+            刪除
+          </a>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <>
-      <Form
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 14 }}
-        layout="horizontal"
-        style={{ maxWidth: 600 }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-      >
-        <Form.Item label="Checkbox" name="disabled" valuePropName="checked">
-          <Checkbox>Checkbox</Checkbox>
-        </Form.Item>
-        <Form.Item label="Radio">
-          <Radio.Group>
-            <Radio value="apple"> Apple </Radio>
-            <Radio value="pear"> Pear </Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item label="Input">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Select">
-          <Select>
-            <Select.Option value="demo">Demo</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item label="TreeSelect">
-          <TreeSelect
-            treeData={[
-              {
-                title: "Light",
-                value: "light",
-                children: [{ title: "Bamboo", value: "bamboo" }],
-              },
-            ]}
-          />
-        </Form.Item>
-        <Form.Item label="Cascader">
-          <Cascader
-            options={[
-              {
-                value: "zhejiang",
-                label: "Zhejiang",
-                children: [
-                  {
-                    value: "hangzhou",
-                    label: "Hangzhou",
-                  },
-                ],
-              },
-            ]}
-          />
-        </Form.Item>
-        <Form.Item label="DatePicker">
-          <DatePicker />
-        </Form.Item>
-        <Form.Item label="RangePicker">
-          <RangePicker />
-        </Form.Item>
-        <Form.Item label="InputNumber" name="InputNumber">
-          <InputNumber />
-        </Form.Item>
-        <Form.Item label="TextArea">
-          <TextArea rows={4} />
-        </Form.Item>
-        <Form.Item label="Switch" valuePropName="checked">
-          <Switch />
-        </Form.Item>
-        <Form.Item label="Upload" valuePropName="fileList">
-          <Upload action="/upload.do" listType="picture-card">
-            <div>
-              <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Upload</div>
-            </div>
-          </Upload>
-        </Form.Item>
-        <Form.Item label="Button">
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
+      <Button type="primary" onClick={handleAdd}>
+        申请调休
+      </Button>
+      <Table columns={columns} dataSource={leaveList} rowKey="id" />
+      <LeaveForm status={status} leaveId={leaveId ? leaveId : undefined} />
     </>
   );
 };
 
-export default () => <FormDisabledDemo />;
+export default App;

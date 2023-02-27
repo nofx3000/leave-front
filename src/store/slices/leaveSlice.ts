@@ -3,23 +3,23 @@ import { RootState, AppDispatch, AppThunk } from "../store";
 import axios from "axios";
 import {
   LeaveInter,
-  LeaveListType,
-  LeaveListDivisionType,
-  LeaveListUserType,
+  // LeaveListType,
+  // LeaveListDivisionType,
+  // LeaveListUserType,
 } from "../../interface/LeaveInterface";
 
 export interface LeaveState {
   leave?: LeaveInter;
-  leaveList?: LeaveListType;
-  leaveListDivision?: LeaveListDivisionType;
-  leaveListUser?: LeaveListUserType;
+  leaveList?: LeaveInter[];
+  // leaveListDivision?: LeaveListDivisionType;
+  // leaveListUser?: LeaveInter[];
   openLeaveFormModal: boolean;
 }
 
 const initialState: LeaveState = {
   leaveList: [],
-  leaveListDivision: undefined,
-  leaveListUser: undefined,
+  // leaveListDivision: undefined,
+  // leaveListUser: undefined,
   openLeaveFormModal: false,
 };
 
@@ -97,10 +97,10 @@ export const selectOpenModel = (state: RootState) =>
 export const selectLeaveList = (state: RootState) =>
   state.leaveReducer.leaveList;
 
-export const selectLeaveListDivision = (state: RootState) =>
-  state.leaveReducer.leaveListDivision;
+// export const selectLeaveListDivision = (state: RootState) =>
+//   state.leaveReducer.leaveListDivision;
 
-export const selectLeaveListUser = (state: RootState) =>
-  state.leaveReducer.leaveListUser;
+// export const selectLeaveListUser = (state: RootState) =>
+//   state.leaveReducer.leaveListUser;
 
 export default leaveSlice.reducer;

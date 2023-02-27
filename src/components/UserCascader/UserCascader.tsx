@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Cascader, Tag } from "antd";
 import { App as globalAntd } from "antd";
-import { selectUserList } from "../../store/slices/userinfoSlice";
+import {
+  selectUserList,
+  selectUserinfo,
+} from "../../store/slices/userinfoSlice";
 import { UserInfoInter } from "../../interface/UserInterface";
+import { DivisionInter } from "../../interface/DivisionInterface";
 import { StatusType } from "../../views/TaskList/TaskList";
 import { listToMap } from "../../utils/formaters";
 import axios from "axios";
@@ -19,9 +23,12 @@ const App: React.FC<UserCascaderProps> = (props) => {
   const { trigger, onTriggered, status, operator_list } = props;
   const staticFunction = globalAntd.useApp();
   const message = staticFunction.message;
-  const [userListByDivision, setUserListByDivision] = useState([]);
+  const [userListByDivision, setUserListByDivision] = useState<UserInfoInter[]>(
+    []
+  );
   const [selectedList, setSelectedList] = useState<string[]>([]);
   const userList = useSelector(selectUserList);
+  const userinfo: UserInfoInter | undefined = useSelector(selectUserinfo);
   const userMap = listToMap(userList as UserInfoInter[]);
 
   useEffect(() => {
@@ -43,8 +50,18 @@ const App: React.FC<UserCascaderProps> = (props) => {
     const getUserListByDivsion = async () => {
       const res = await axios.get("/user/division");
       if (res.data.errno === 0) {
-        setUserListByDivision(res.data.data);
-        console.log(res.data.data);
+        if (
+          userinfo &&
+          (userinfo.role?.role_name === "admin" ||
+            userinfo.role?.role_name === "enginner")
+        ) {
+          setUserListByDivision(res.data.data);
+        } else if (userinfo && userinfo.role?.role_name === "team_leader") {
+          setUserListByDivision(
+            listToMap<DivisionInter>(res.data.data)[userinfo.division_id]
+              .users as UserInfoInter[]
+          );
+        }
       } else {
         message.error("获取级联选择器数据失败");
       }
@@ -53,7 +70,7 @@ const App: React.FC<UserCascaderProps> = (props) => {
   }, []);
 
   const onChange = (value: string[]) => {
-    if (value.length < 2) return;
+    // if (value.length < 2) return;
     console.log(value[value.length - 1]);
     setSelectedList([...selectedList, value[value.length - 1]]);
   };

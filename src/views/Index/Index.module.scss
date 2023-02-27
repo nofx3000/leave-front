@@ -11,7 +11,15 @@
 }
 .content {
   background-color: #fff;
-  padding: 4vh 2vw;
-  height: 100vh;
+  padding: 0vh 2vw;
+  height: 95vh;
   overflow: scroll;
+}
+
+.header {
+  background-color: #fff !important;
+  height: 5vh !important;
+  line-height: 5vh !important;
+  display: flex;
+  justify-content: end;
 }

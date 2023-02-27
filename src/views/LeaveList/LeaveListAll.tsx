@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Space, Switch, Table, Button } from "antd";
+import { Space, Switch, Table, Button, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { LeaveInter } from "../../interface/LeaveInterface";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,8 +42,15 @@ const App: React.FC = () => {
     dispatch(setOpenLeaveFormModal(true));
   };
 
-  const onSwtichChange = (checked: boolean) => {
-    console.log(`switch to ${checked}`);
+  const onSwtichChange = async (checked: boolean, id: number) => {
+    const res = await axios.patch(`/leave/${id}`, { approved: checked });
+    console.log(res);
+    if (res.data.data[0] > 0) {
+      message.success("修改成功");
+    } else {
+      message.error("修改审批状态时出现错误");
+    }
+    dispatch(getLeaveListAsync());
   };
 
   // 表结构
@@ -88,8 +95,8 @@ const App: React.FC = () => {
     {
       title: "审核状态",
       key: "approved",
-      render: (_, { approved }) => (
-        <Switch checked={approved} onChange={onSwtichChange} />
+      render: (_, { id, approved }) => (
+        <Switch checked={approved} onChange={(e) => onSwtichChange(e, id)} />
       ),
     },
     {

@@ -3,6 +3,7 @@ import { Layout } from "antd";
 import style from "./Index.module.scss";
 import { Outlet } from "react-router-dom";
 import Menu from "../../components/Menu/Menu";
+import MyHeader from "../../components/Header/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { getRoleList } from "../../store/slices/roleSlice";
@@ -21,6 +22,7 @@ const App: React.FC = () => {
     dispatch(getRightList());
     dispatch(getTaskList());
   });
+
   return (
     <Layout>
       {/* <Header className={style.header}>Header</Header> */}
@@ -28,9 +30,14 @@ const App: React.FC = () => {
         <Sider className={style.sider} breakpoint="lg">
           <Menu className="s" />
         </Sider>
-        <Content className={style.content}>
-          <Outlet />
-        </Content>
+        <Layout>
+          <Header className={style.header}>
+            <MyHeader />
+          </Header>
+          <Content className={style.content}>
+            <Outlet />
+          </Content>
+        </Layout>
       </Layout>
     </Layout>
   );
