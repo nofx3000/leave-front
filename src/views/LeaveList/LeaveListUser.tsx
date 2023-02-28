@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Space, Switch, Table, Button, Tag } from "antd";
+import { Space, Tooltip, Table, Button, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { LeaveInter } from "../../interface/LeaveInterface";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,10 +10,15 @@ import {
   getLeaveListUserAsync,
   selectLeaveList,
 } from "../../store/slices/leaveSlice";
+import {
+  getRecordListUserAsync,
+  selectRecordList,
+} from "../../store/slices/recordSlice";
 import { selectUserinfo } from "../../store/slices/userinfoSlice";
 import LeaveForm from "../../components/LeaveForm/LeaveForm";
 import dateFormat from "dateformat";
 import { UserInfoInter } from "../../interface/UserInterface";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 export type StatusType = "add" | "edit";
 
@@ -22,11 +27,13 @@ const App: React.FC = () => {
   const [leaveId, setLeaveId] = useState<number | undefined>(undefined);
   const dispatch = useDispatch<AppDispatch>();
   const leaveList = useSelector(selectLeaveList);
+  const recordList = useSelector(selectRecordList);
   const userinfo: UserInfoInter | undefined = useSelector(selectUserinfo);
 
   useEffect(() => {
     if (userinfo) {
       dispatch(getLeaveListUserAsync(userinfo.id));
+      dispatch(getRecordListUserAsync(userinfo.id));
     }
   }, [userinfo]);
 
@@ -46,13 +53,22 @@ const App: React.FC = () => {
     dispatch(setOpenLeaveFormModal(true));
   };
 
-  const calcLeaveLength = () => {
+  const calcApprovedLeaveLength = () => {
     if (leaveList) {
       return leaveList.reduce((prev, cur) => {
         if (cur.approved) {
           return prev + cur.length;
         }
         return prev;
+      }, 0);
+    }
+    return "计算错误";
+  };
+
+  const calcUsedLeaveLength = () => {
+    if (recordList) {
+      return recordList.reduce((prev, cur) => {
+        return prev + cur.length;
       }, 0);
     }
     return "计算错误";
@@ -135,9 +151,16 @@ const App: React.FC = () => {
       <Button type="primary" onClick={handleAdd}>
         申请调休
       </Button>
-      <span style={{ fontSize: "2vh", marginLeft: "2vw" }}>
-        当前可倒休时长为: {calcLeaveLength()}
+      <span style={{ fontSize: "2vh", marginLeft: "2vw", color: "#108ee9" }}>
+        当前可用批倒休时长为:{" "}
+        {Number(calcApprovedLeaveLength()) - Number(calcUsedLeaveLength())}小时
       </span>
+      <Tooltip
+        placement="right"
+        title={`已获批倒休时长为: ${calcApprovedLeaveLength()}小时, 已使用倒休时长为: ${calcUsedLeaveLength()}小时`}
+      >
+        <InfoCircleOutlined style={{ marginLeft: "1vw" }} />
+      </Tooltip>
       <Table columns={columns} dataSource={leaveList} rowKey="id" />
       <LeaveForm status={status} leaveId={leaveId ? leaveId : undefined} />
     </>

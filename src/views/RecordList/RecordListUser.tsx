@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Space, Switch, Table, Button, Tag } from "antd";
+import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { RecordInter } from "../../interface/RecordInterface";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
-import axios from "axios";
 import {
-  setOpenRecordFormModal,
   getRecordListUserAsync,
   selectRecordList,
 } from "../../store/slices/recordSlice";
