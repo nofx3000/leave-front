@@ -9,6 +9,9 @@ import TaskList from "../views/TaskList/TaskList";
 import LeaveListAll from "../views/LeaveList/LeaveListAll";
 import LeaveListDivision from "../views/LeaveList/LeaveListDivision";
 import LeaveListUser from "../views/LeaveList/LeaveListUser";
+import RecordListAll from "../views/RecordList/RecordListAll";
+import RecordListDivision from "../views/RecordList/RecordListDivision";
+import RecordListUser from "../views/RecordList/RecordListUser";
 
 const router = createHashRouter([
   {
@@ -54,6 +57,18 @@ const router = createHashRouter([
       {
         path: "leaveListUser",
         element: <LeaveListUser />,
+      },
+      {
+        path: "recordListAll",
+        element: <RecordListAll />,
+      },
+      {
+        path: "recordListDivision",
+        element: <RecordListDivision />,
+      },
+      {
+        path: "recordListUser",
+        element: <RecordListUser />,
       },
     ],
   },

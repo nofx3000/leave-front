@@ -1,6 +1,7 @@
 import { RightInter } from "../interface/RightInterface";
 import { RoleInter } from "../interface/RoleInterface";
 import { UserInfoInter } from "../interface/UserInterface";
+import dayjs from "dayjs";
 
 export const roleIdToRoleName = (
   roleid: number,
@@ -87,4 +88,10 @@ export const listToTree = <T extends RightInter>(list: T[]) => {
     }
   });
   return tree;
+};
+
+export const sequelizeTimeToAntdTime = <T,>(obj: T) => {
+  const _record: any = Object.assign({}, obj);
+  _record.leave_at = dayjs(_record.leave_at, "yyyy-mmm-dd");
+  return _record;
 };
