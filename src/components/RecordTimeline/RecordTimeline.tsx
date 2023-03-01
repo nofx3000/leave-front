@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import {
   getLeaveListUserAsync,
-  selectLeaveList,
+  selectLeaveListUser,
 } from "../../store/slices/leaveSlice";
 import {
   getRecordListUserAsync,
   selectRecordList,
 } from "../../store/slices/recordSlice";
 import { selectUserinfo } from "../../store/slices/userinfoSlice";
-import { Timeline, TimelineItemProps } from "antd";
+import { Timeline, TimelineItemProps, Card } from "antd";
 import { UserInfoInter } from "../../interface/UserInterface";
 import { LeaveInter } from "../../interface/LeaveInterface";
 import { RecordInter } from "../../interface/RecordInterface";
@@ -19,17 +19,17 @@ import dateFormat from "dateformat";
 type _TimelineItemProps = TimelineItemProps & { time?: string | Date };
 
 const App: React.FC = () => {
-  const leaveList = useSelector(selectLeaveList);
+  const leaveList = useSelector(selectLeaveListUser);
   const recordList = useSelector(selectRecordList);
   const userinfo: UserInfoInter | undefined = useSelector(selectUserinfo);
   const [timelineData, setTimelineData] = useState<_TimelineItemProps[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-    if (userinfo) {
-      dispatch(getLeaveListUserAsync(userinfo.id));
-      dispatch(getRecordListUserAsync(userinfo.id));
-    }
-  }, [userinfo]);
+  //   useEffect(() => {
+  //     if (userinfo) {
+  //       dispatch(getLeaveListUserAsync(userinfo.id));
+  //       dispatch(getRecordListUserAsync(userinfo.id));
+  //     }
+  //   }, [userinfo]);
 
   useEffect(() => {
     setTimelineData(leaveListToTimeline() as _TimelineItemProps[]);
@@ -41,9 +41,13 @@ const App: React.FC = () => {
         if (cur.approved) {
           const item: _TimelineItemProps = {
             color: "green",
-            children: `${dateFormat(cur.created_at, "yyyy-mm-dd")}获批倒休时间${
-              cur.length
-            }小时`,
+            children: (
+              <>
+                {dateFormat(cur.created_at, "yyyy-mm-dd")}获批倒休时间
+                {cur.length}小时 <br /> 关联任务:
+                {cur.task ? cur.task.task_name : "无"}
+              </>
+            ),
             time: new Date(cur.created_at),
             position: "right",
           };
@@ -71,7 +75,14 @@ const App: React.FC = () => {
     return data?.sort((a, b) => Number(a.time) - Number(b.time));
   };
 
-  return <Timeline items={timelineData} mode="alternate" />;
+  return (
+    <>
+      <Card style={{ width: "40vw", height: "80vh", overflow: "auto" }}>
+        <p style={{}}>本人倒休记录:</p>
+        <Timeline items={timelineData} mode="alternate" />
+      </Card>
+    </>
+  );
 };
 
 export default App;

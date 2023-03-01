@@ -8,7 +8,7 @@ import axios from "axios";
 import {
   setOpenLeaveFormModal,
   getLeaveListUserAsync,
-  selectLeaveList,
+  selectLeaveListUser,
 } from "../../store/slices/leaveSlice";
 import {
   getRecordListUserAsync,
@@ -16,9 +16,14 @@ import {
 } from "../../store/slices/recordSlice";
 import { selectUserinfo } from "../../store/slices/userinfoSlice";
 import LeaveForm from "../../components/LeaveForm/LeaveForm";
+import {
+  calcApprovedLeaveLength,
+  calcUsedLeaveLength,
+} from "../../utils/calculator";
 import dateFormat from "dateformat";
 import { UserInfoInter } from "../../interface/UserInterface";
 import { InfoCircleOutlined } from "@ant-design/icons";
+import { RecordInter } from "../../interface/RecordInterface";
 
 export type StatusType = "add" | "edit";
 
@@ -26,7 +31,7 @@ const App: React.FC = () => {
   const [status, setStatus] = useState<StatusType>("add");
   const [leaveId, setLeaveId] = useState<number | undefined>(undefined);
   const dispatch = useDispatch<AppDispatch>();
-  const leaveList = useSelector(selectLeaveList);
+  const leaveList = useSelector(selectLeaveListUser);
   const recordList = useSelector(selectRecordList);
   const userinfo: UserInfoInter | undefined = useSelector(selectUserinfo);
 
@@ -51,27 +56,6 @@ const App: React.FC = () => {
     setStatus("edit");
     setLeaveId(id);
     dispatch(setOpenLeaveFormModal(true));
-  };
-
-  const calcApprovedLeaveLength = () => {
-    if (leaveList) {
-      return leaveList.reduce((prev, cur) => {
-        if (cur.approved) {
-          return prev + cur.length;
-        }
-        return prev;
-      }, 0);
-    }
-    return "计算错误";
-  };
-
-  const calcUsedLeaveLength = () => {
-    if (recordList) {
-      return recordList.reduce((prev, cur) => {
-        return prev + cur.length;
-      }, 0);
-    }
-    return "计算错误";
   };
 
   // // 表结构
@@ -153,11 +137,17 @@ const App: React.FC = () => {
       </Button>
       <span style={{ fontSize: "2vh", marginLeft: "2vw", color: "#108ee9" }}>
         当前可用批倒休时长为:{" "}
-        {Number(calcApprovedLeaveLength()) - Number(calcUsedLeaveLength())}小时
+        {Number(calcApprovedLeaveLength(leaveList as LeaveInter[])) -
+          Number(calcUsedLeaveLength(recordList as RecordInter[]))}
+        小时
       </span>
       <Tooltip
         placement="right"
-        title={`已获批倒休时长为: ${calcApprovedLeaveLength()}小时, 已使用倒休时长为: ${calcUsedLeaveLength()}小时`}
+        title={`已获批倒休时长为: ${calcApprovedLeaveLength(
+          leaveList as LeaveInter[]
+        )}小时, 已使用倒休时长为: ${calcUsedLeaveLength(
+          recordList as RecordInter[]
+        )}小时`}
       >
         <InfoCircleOutlined style={{ marginLeft: "1vw" }} />
       </Tooltip>
