@@ -8,7 +8,7 @@ import axios from "axios";
 import {
   setOpenLeaveFormModal,
   getLeaveListDivisionAsync,
-  selectLeaveListDivision,
+  selectLeaveList,
 } from "../../store/slices/leaveSlice";
 import { selectUserinfo } from "../../store/slices/userinfoSlice";
 import LeaveForm from "../../components/LeaveForm/LeaveForm";
@@ -21,7 +21,7 @@ const App: React.FC = () => {
   const [status, setStatus] = useState<StatusType>("add");
   const [leaveId, setLeaveId] = useState<number | undefined>(undefined);
   const dispatch = useDispatch<AppDispatch>();
-  const leaveList = useSelector(selectLeaveListDivision);
+  const leaveList = useSelector(selectLeaveList);
   const userinfo: UserInfoInter | undefined = useSelector(selectUserinfo);
 
   useEffect(() => {

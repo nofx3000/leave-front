@@ -11,15 +11,15 @@ import {
 export interface LeaveState {
   leave?: LeaveInter;
   leaveList?: LeaveInter[];
-  leaveListDivision?: LeaveInter[];
-  leaveListUser?: LeaveInter[];
+  // leaveListDivision?: LeaveInter[];
+  // leaveListUser?: LeaveInter[];
   openLeaveFormModal: boolean;
 }
 
 const initialState: LeaveState = {
   leaveList: [],
-  leaveListDivision: [],
-  leaveListUser: [],
+  // leaveListDivision: [],
+  // leaveListUser: [],
   openLeaveFormModal: false,
 };
 
@@ -71,7 +71,7 @@ export const leaveSlice = createSlice({
     });
 
     builder.addCase(getLeaveListDivisionAsync.fulfilled, (state, action) => {
-      state.leaveListDivision = action.payload;
+      state.leaveList = action.payload;
     });
     builder.addCase(getLeaveListDivisionAsync.rejected, (state, action) => {
       console.log("rejected");
@@ -79,7 +79,7 @@ export const leaveSlice = createSlice({
     });
 
     builder.addCase(getLeaveListUserAsync.fulfilled, (state, action) => {
-      state.leaveListUser = action.payload;
+      state.leaveList = action.payload;
     });
     builder.addCase(getLeaveListUserAsync.rejected, (state, action) => {
       console.log("rejected");
@@ -97,10 +97,10 @@ export const selectOpenModel = (state: RootState) =>
 export const selectLeaveList = (state: RootState) =>
   state.leaveReducer.leaveList;
 
-export const selectLeaveListDivision = (state: RootState) =>
-  state.leaveReducer.leaveListDivision;
+// export const selectLeaveListDivision = (state: RootState) =>
+//   state.leaveReducer.leaveListDivision;
 
-export const selectLeaveListUser = (state: RootState) =>
-  state.leaveReducer.leaveListUser;
+// export const selectLeaveListUser = (state: RootState) =>
+//   state.leaveReducer.leaveListUser;
 
 export default leaveSlice.reducer;

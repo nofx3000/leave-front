@@ -1,25 +1,29 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "../../store/store";
-import {
-  selectLeaveList,
-  getLeaveListAsync,
-} from "../../store/slices/leaveSlice";
+import { LeaveInter } from "../../interface/LeaveInterface";
 
 const App: React.FC = () => {
-  const leaveList = useSelector(selectLeaveList);
+  const [leaveList, setLeaveList] = useState<LeaveInter[]>([]);
+  const [unapproved, setUnapproved] = useState<number | string>(0);
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
-    dispatch(getLeaveListAsync());
+    const getLeaveList = async () => {
+      const res = await axios.get("/leave");
+      setLeaveList(res.data.data);
+    };
+    getLeaveList();
   }, []);
+
+  useEffect(() => {
+    setUnapproved(calcUnapprovedApply(leaveList));
+  }, [leaveList]);
 
   const goLeaveListAll = () => {
     navigate("/leaveListAll");
   };
 
-  const calcUnapprovedApply = () => {
+  const calcUnapprovedApply = (leaveList: LeaveInter[]) => {
     if (leaveList) {
       return leaveList.reduce((prev, cur) => {
         if (!cur.approved) {
@@ -33,7 +37,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <span>目前有{calcUnapprovedApply()}条倒休申请未处理,</span>
+      <span>目前有{unapproved}条倒休申请未处理,</span>
       <span
         onClick={goLeaveListAll}
         style={{ color: "#108ee9", cursor: "pointer" }}

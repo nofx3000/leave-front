@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import {
   getLeaveListUserAsync,
-  selectLeaveListUser,
+  selectLeaveList,
 } from "../../store/slices/leaveSlice";
 import {
   getRecordListUserAsync,
@@ -27,7 +27,7 @@ const App: React.FC = () => {
   const staticFunction = globalAntd.useApp();
   const message = staticFunction.message;
 
-  const leaveList = useSelector(selectLeaveListUser);
+  const leaveList = useSelector(selectLeaveList);
   const recordList = useSelector(selectRecordList);
   const userinfo: UserInfoInter | undefined = useSelector(selectUserinfo);
 

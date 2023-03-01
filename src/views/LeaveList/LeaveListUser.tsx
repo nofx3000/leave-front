@@ -8,7 +8,7 @@ import axios from "axios";
 import {
   setOpenLeaveFormModal,
   getLeaveListUserAsync,
-  selectLeaveListUser,
+  selectLeaveList,
 } from "../../store/slices/leaveSlice";
 import {
   getRecordListUserAsync,
@@ -31,7 +31,9 @@ const App: React.FC = () => {
   const [status, setStatus] = useState<StatusType>("add");
   const [leaveId, setLeaveId] = useState<number | undefined>(undefined);
   const dispatch = useDispatch<AppDispatch>();
-  const leaveList = useSelector(selectLeaveListUser);
+  const leaveList = useSelector(selectLeaveList);
+  console.log("leaveList", leaveList);
+
   const recordList = useSelector(selectRecordList);
   const userinfo: UserInfoInter | undefined = useSelector(selectUserinfo);
 
