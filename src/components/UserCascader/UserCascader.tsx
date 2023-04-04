@@ -49,14 +49,16 @@ const App: React.FC<UserCascaderProps> = (props) => {
   useEffect(() => {
     const getUserListByDivsion = async () => {
       const res = await axios.get("/user/division");
+      console.log(userinfo && userinfo.role?.role_name);
+
       if (res.data.errno === 0) {
         if (
           userinfo &&
           (userinfo.role?.role_name === "admin" ||
-            userinfo.role?.role_name === "enginner")
+            userinfo.role?.role_name === "工程师")
         ) {
           setUserListByDivision(res.data.data);
-        } else if (userinfo && userinfo.role?.role_name === "team_leader") {
+        } else if (userinfo && userinfo.role?.role_name === "中队长") {
           setUserListByDivision(
             listToMap<DivisionInter>(res.data.data)[userinfo.division_id]
               .users as UserInfoInter[]

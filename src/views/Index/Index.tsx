@@ -10,6 +10,8 @@ import { getRoleList } from "../../store/slices/roleSlice";
 import { getRightList } from "../../store/slices/rightSlice";
 import { getUserListAsync } from "../../store/slices/userinfoSlice";
 import { getTaskList } from "../../store/slices/taskSlice";
+import { getMenuListAsync } from "../../store/slices/menuSlice";
+import axios from "axios";
 
 const { Header, Sider, Content } = Layout;
 
@@ -17,11 +19,15 @@ const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   // 初始化redux数据
   useEffect(() => {
-    dispatch(getRoleList());
-    dispatch(getUserListAsync());
-    dispatch(getRightList());
-    dispatch(getTaskList());
-  });
+    if (axios.defaults.headers["authorization"]) {
+      dispatch(getRoleList());
+      dispatch(getUserListAsync());
+      dispatch(getRightList());
+      dispatch(getTaskList());
+      dispatch(getMenuListAsync());
+    }
+    console.log("======", axios.defaults.headers["authorization"]);
+  }, []);
 
   return (
     <Layout>

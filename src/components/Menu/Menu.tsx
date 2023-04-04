@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import style from "./menu.module.scss";
 import {
   AppstoreOutlined,
@@ -39,31 +39,43 @@ const stringToIconMap: StringToIconInter = {
 const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const menuList: RawMenuItemObj = useSelector(selectMenuList);
+  const [menuList, setMenuList] = useState<MenuItemInter[]>([]);
+  const menuObj: RawMenuItemObj = useSelector(selectMenuList);
   useEffect(() => {
     dispatch(getMenuListAsync());
-  }, [dispatch]);
-  function formatMenuList(menuObj: RawMenuItemObj) {
-    const menuList: MenuItemInter[] = [
+  }, []);
+  useEffect(() => {
+    setMenuList([
       {
         id: 0,
         label: "首页",
         key: "/home",
       },
-    ];
-    for (const id in menuObj) {
-      menuList.push(menuObj[id]);
-    }
-    return menuList;
-  }
-  // function formatMenuList(menuList: MenuItemInter[]): MenuItemInter[] {
-  //   return menuList.map((item) => {
-  //     return Object.assign({}, item, {
-  //       key: item.path,
-  //       icon: stringToIconMap[item.icon as string],
-  //     });
-  //   });
+      ...MenuObjToMenuArray(menuObj),
+    ]);
+    console.log(MenuObjToMenuArray(menuObj));
+  }, [menuObj]);
+  // function formatMenuList(menuObj: RawMenuItemObj) {
+  //   const menuList: MenuItemInter[] = [
+  //     {
+  //       id: 0,
+  //       label: "首页",
+  //       key: "/home",
+  //     },
+  //   ];
+  //   for (const id in menuObj) {
+  //     menuList.push(menuObj[id]);
+  //   }
+  //   return menuList;
   // }
+
+  function MenuObjToMenuArray(menuObj: RawMenuItemObj): MenuItemInter[] {
+    const arr = [];
+    for (const id in menuObj) {
+      arr.push(menuObj[id]);
+    }
+    return arr;
+  }
 
   return (
     <>
@@ -72,7 +84,7 @@ const App: React.FC<React.HTMLAttributes<HTMLDivElement>> = () => {
         defaultSelectedKeys={["/home"]}
         mode="inline"
         theme="dark"
-        items={formatMenuList(menuList) as any}
+        items={menuList as any}
         onClick={(item) => {
           navigate(item.key);
         }}
